@@ -1,0 +1,50 @@
+You can safely delete these directories before archiving - they will be regenerated with npm install and ng build:
+
+Directories to Delete Before Archiving:
+node_modules - ~150,000+ files
+
+Regenerate with: npm install
+.angular - Build cache
+
+Regenerate automatically on: npm start or ng build
+docs - Production build output
+
+Regenerate with: npm run build:github
+dist/ - Development build output (if exists)
+
+Regenerate with: ng build
+Files to KEEP:
+✅ package.json - Contains dependency list
+✅ package-lock.json - Locks dependency versions
+✅ angular.json - Build configuration
+✅ tsconfig.json - TypeScript configuration
+✅ src - All source code
+✅ public - Static assets (CNAME, .nojekyll)
+✅ .gitignore
+✅ README.md
+✅ DEPLOYMENT-GUIDE.md
+
+Quick Cleanup Commands:
+Windows (PowerShell):
+Remove-Item -Recurse -Force node_modules, .angular, docs, dist
+
+
+Git Bash / Linux / macOS:
+rm -rf node_modules .angular docs dist
+
+Restore After Unzipping:
+# Install dependencies
+npm install
+
+# Start development server
+npm start
+
+# Or build for production
+npm run build:github
+
+Archive Size Reduction:
+Before cleanup: ~500 MB (with node_modules)
+After cleanup: ~500 KB (just source code)
+This reduces the file count from ~150,000+ files to ~50-100 files! 🎉
+
+The package.json and package-lock.json ensure you can recreate the exact same node_modules directory by running npm install.

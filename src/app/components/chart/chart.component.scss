@@ -1,0 +1,12 @@
+.chart-wrapper {
+    height: 400px; // Fixed height for chart container
+    width: 100%;
+    position: relative;
+    padding: 16px;
+}
+
+canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}

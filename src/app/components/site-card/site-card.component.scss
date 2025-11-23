@@ -1,0 +1,37 @@
+.site-card {
+    height: 100%;
+}
+
+.site-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.info-row {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+}
+
+.label {
+    font-weight: 500;
+    min-width: 100px;
+    color: var(--mat-sys-on-surface-variant);
+}
+
+.value {
+    color: var(--mat-sys-on-surface);
+}
+
+.usgs-link {
+    color: var(--mat-sys-primary);
+    text-decoration: none;
+    margin-top: 8px;
+    display: inline-block;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

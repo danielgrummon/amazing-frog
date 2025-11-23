@@ -1,0 +1,144 @@
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <h1>USGS Water Station Dashboard</h1>
+        <p>Monitor gage height and streamflow data for water monitoring locations</p>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Control Panel -->
+        <aside class="control-panel">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title>Select Location</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="controls-stack">
+                        <!-- State Selection -->
+                        <mat-form-field appearance="outline">
+                            <mat-label>State</mat-label>
+                            <mat-select [formControl]="stateControl">
+                                @if (statesLoading()) {
+                                <mat-option disabled>Loading states...</mat-option>
+                                } @else {
+                                @for (state of states$ | async; track state.state_code) {
+                                <mat-option [value]="state.state_code">
+                                    {{ state.state_name }}
+                                </mat-option>
+                                }
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        <!-- County Selection -->
+                        <mat-form-field appearance="outline">
+                            <mat-label>County</mat-label>
+                            <mat-select [formControl]="countyControl">
+                                @if (countiesLoading()) {
+                                <mat-option disabled>Loading counties...</mat-option>
+                                } @else if (!stateControl.value) {
+                                <mat-option disabled>Select a state first</mat-option>
+                                } @else {
+                                @for (county of counties$ | async; track county.county_code) {
+                                <mat-option [value]="county.county_code">
+                                    {{ county.county_name }}
+                                </mat-option>
+                                }
+                                }
+                            </mat-select>
+                        </mat-form-field>
+
+                        <!-- Location Selection -->
+                        <mat-form-field appearance="outline">
+                            <mat-label>Monitoring Location</mat-label>
+                            <mat-select [formControl]="locationControl">
+                                @if (locationsLoading()) {
+                                <mat-option disabled>Loading locations...</mat-option>
+                                } @else if (!countyControl.value) {
+                                <mat-option disabled>Select a county first</mat-option>
+                                } @else {
+                                @for (location of locations$ | async; track location.id) {
+                                <mat-option [value]="location.id">
+                                    {{ location.name }}
+                                </mat-option>
+                                }
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            @if (selectedLocation$ | async; as location) {
+            <!-- Station Info Card -->
+            <app-site-card [location]="location"></app-site-card>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <!-- Streamflow Chart -->
+                <mat-card class="chart-card">
+                    <mat-card-header>
+                        <mat-card-title>Streamflow Chart</mat-card-title>
+                    </mat-card-header>
+                    @if (streamflowData$ | async; as flowData) {
+                    @if (flowData.hasData) {
+                    <app-chart [data]="flowData.points" [title]="'Daily Streamflow (Last 90 Days)'"
+                        [yAxisLabel]="'Discharge (' + flowData.unit + ')'" [lineColor]="'#4CAF50'">
+                    </app-chart>
+                    } @else {
+                    <mat-card-content>
+                        <p class="no-data">No streamflow data available for this location</p>
+                    </mat-card-content>
+                    }
+                    } @else if (locationControl.value) {
+                    <mat-card-content class="loading-content">
+                        <mat-spinner diameter="40"></mat-spinner>
+                        <p>Loading streamflow data... (Location: {{ locationControl.value }})</p>
+                    </mat-card-content>
+                    } @else {
+                    <mat-card-content>
+                        <p class="no-data">Select a monitoring location to view streamflow data</p>
+                    </mat-card-content>
+                    }
+                </mat-card>
+
+                <!-- Gage Height Chart -->
+                <mat-card class="chart-card">
+                    <mat-card-header>
+                        <mat-card-title>Gage Height Chart</mat-card-title>
+                    </mat-card-header>
+                    @if (gageHeightData$ | async; as gageData) {
+                    @if (gageData.hasData) {
+                    <app-chart [data]="gageData.points" [title]="'Daily Gage Height (Last 90 Days)'"
+                        [yAxisLabel]="'Height (' + gageData.unit + ')'" [lineColor]="'#2196F3'">
+                    </app-chart>
+                    } @else {
+                    <mat-card-content>
+                        <p class="no-data">No gage height data available for this location</p>
+                    </mat-card-content>
+                    }
+                    } @else if (locationControl.value) {
+                    <mat-card-content class="loading-content">
+                        <mat-spinner diameter="40"></mat-spinner>
+                        <p>Loading gage height data... (Location: {{ locationControl.value }})</p>
+                    </mat-card-content>
+                    } @else {
+                    <mat-card-content>
+                        <p class="no-data">Select a monitoring location to view gage height data</p>
+                    </mat-card-content>
+                    }
+                </mat-card>
+            </div>
+            } @else {
+            <mat-card class="placeholder-card">
+                <mat-card-content>
+                    <h2>Welcome to USGS Water Station Dashboard</h2>
+                    <p>Select a state, county, and monitoring location to view station data and charts.</p>
+                </mat-card-content>
+            </mat-card>
+            }
+        </main>
+    </div>
+</div>

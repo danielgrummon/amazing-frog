@@ -1,0 +1,29 @@
+<mat-card *ngIf="location" class="site-card">
+    <mat-card-header>
+        <mat-card-title>{{ location.name }}</mat-card-title>
+        <mat-card-subtitle>{{ location.id }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="site-info">
+            <div class="info-row">
+                <span class="label">Type:</span>
+                <span class="value">{{ location.type }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">County:</span>
+                <span class="value">{{ location.county_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Coordinates:</span>
+                <span class="value">{{ location.latitude | number:'1.4-4' }}, {{ location.longitude | number:'1.4-4'
+                    }}</span>
+            </div>
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <a mat-button color="primary" [href]="'https://waterdata.usgs.gov/monitoring-location/' + location.id"
+            target="_blank">
+            View on USGS Website →
+        </a>
+    </mat-card-actions>
+</mat-card>
