@@ -34,9 +34,23 @@
 }
 
 .control-panel {
-    mat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    >mat-card {
         position: sticky;
         top: 16px;
+    }
+
+    app-weather-card {
+        display: block;
+        position: sticky;
+        top: calc(16px + 280px); // Adjust based on location card height
+
+        @media (max-width: 960px) {
+            position: static;
+        }
     }
 }
 

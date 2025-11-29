@@ -32,3 +32,24 @@ export interface TimeSeriesData {
     points: TimeSeriesPoint[];
     hasData: boolean; // true if points.length > 0
 }
+
+export interface WeatherForecast {
+    temperature: number;
+    temperatureUnit: string;
+    windSpeed: string;
+    windDirection: string;
+    icon: string;
+    name: string; // e.g., "Today", "Tonight", "Monday"
+    probabilityOfPrecipitation: number;
+    shortForecast: string;
+    detailedForecast: string;
+}
+
+export interface WeatherData {
+    location: {
+        city: string;
+        state: string;
+    };
+    currentForecast: WeatherForecast | null;
+    hasData: boolean;
+}

@@ -9,9 +9,11 @@ import { Observable, of, combineLatest, merge } from 'rxjs';
 import { filter, switchMap, tap, shareReplay, startWith, catchError, map } from 'rxjs/operators';
 
 import { UsgsApiService } from '../../services/usgs-api.service';
-import { State, County, MonitoringLocation, TimeSeriesData } from '../../models/domain.models';
+import { WeatherService } from '../../services/weather.service';
+import { State, County, MonitoringLocation, TimeSeriesData, WeatherData } from '../../models/domain.models';
 import { ChartComponent } from '../chart/chart.component';
 import { SiteCardComponent } from '../site-card/site-card.component';
+import { WeatherCardComponent } from '../weather-card/weather-card.component';
 
 @Component({
     selector: 'app-dashboard',
@@ -24,13 +26,15 @@ import { SiteCardComponent } from '../site-card/site-card.component';
         MatCardModule,
         MatProgressSpinnerModule,
         ChartComponent,
-        SiteCardComponent
+        SiteCardComponent,
+        WeatherCardComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
     private readonly usgsService = inject(UsgsApiService);
+    private readonly weatherService = inject(WeatherService);
 
     // Form controls - initialize with disabled state
     stateControl = new FormControl<string | null>(null);
@@ -42,6 +46,7 @@ export class DashboardComponent implements OnInit {
     countiesLoading = signal(false);
     locationsLoading = signal(false);
     chartsLoading = signal(false);
+    weatherLoading = signal(false);
 
     // Data streams - explicitly type to include null
     states$!: Observable<State[]>;
@@ -50,6 +55,7 @@ export class DashboardComponent implements OnInit {
     selectedLocation$!: Observable<MonitoringLocation | undefined>;
     gageHeightData$: Observable<TimeSeriesData | null> = new Observable();
     streamflowData$: Observable<TimeSeriesData | null> = new Observable();
+    weatherData$!: Observable<WeatherData | null>;
 
     ngOnInit() {
         this.setupStreams();
@@ -136,7 +142,7 @@ export class DashboardComponent implements OnInit {
             )
         );
 
-        // Date range for last 90 days
+        // Date range for last 60 days
         const getDateRange = () => {
             const today = new Date();
             const endDate = new Date(today);
@@ -180,6 +186,33 @@ export class DashboardComponent implements OnInit {
 
                 return this.usgsService.getStreamflow(loc, start, end).pipe(
                     catchError(() => of(null))
+                );
+            }),
+            shareReplay({ bufferSize: 1, refCount: false })
+        );
+
+        // Weather data stream - triggered by location selection
+        this.weatherData$ = this.selectedLocation$.pipe(
+            tap(location => {
+                if (location) {
+                    this.weatherLoading.set(true);
+                }
+            }),
+            switchMap((location): Observable<WeatherData | null> => {
+                if (!location) {
+                    this.weatherLoading.set(false);
+                    return of(null);
+                }
+
+                return this.weatherService.getWeatherForLocation(
+                    location.latitude,
+                    location.longitude
+                ).pipe(
+                    tap(() => this.weatherLoading.set(false)),
+                    catchError(() => {
+                        this.weatherLoading.set(false);
+                        return of(null);
+                    })
                 );
             }),
             shareReplay({ bufferSize: 1, refCount: false })

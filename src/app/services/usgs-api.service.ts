@@ -81,6 +81,10 @@ export class UsgsApiService {
         return this.getTimeSeries(locationId, '00060', startDate, endDate, 'Streamflow', 'ft³/s');
     }
 
+    getPrecipitation(locationId: string, startDate: string, endDate: string): Observable<TimeSeriesData> {
+        return this.getTimeSeries(locationId, '00045', startDate, endDate, 'Precipitation', 'in');
+    }
+
     private getTimeSeries(
         locationId: string,
         parameterCode: string,

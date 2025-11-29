@@ -1,0 +1,77 @@
+<mat-card class="weather-card">
+    <mat-card-header>
+        <mat-card-title>
+            <mat-icon>wb_sunny</mat-icon>
+            Weather Forecast
+        </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+        @if (loading) {
+        <div class="loading-state">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Loading weather...</p>
+        </div>
+        } @else if (weather; as w) {
+        @if (w.hasData && w.currentForecast; as forecast) {
+        <div class="weather-content">
+            <!-- Location -->
+            <div class="location">
+                <strong>{{ w.location.city }}, {{ w.location.state }}</strong>
+            </div>
+
+            <!-- Weather Icon -->
+            <div class="weather-icon">
+                <img [src]="forecast.icon" [alt]="forecast.shortForecast">
+            </div>
+
+            <!-- Current Period Name -->
+            <div class="period-name">
+                {{ forecast.name }}
+            </div>
+
+            <!-- Temperature -->
+            <div class="temperature">
+                <span class="temp-value">{{ forecast.temperature }}°</span>
+                <span class="temp-unit">{{ forecast.temperatureUnit }}</span>
+            </div>
+
+            <!-- Short Forecast -->
+            <div class="short-forecast">
+                {{ forecast.shortForecast }}
+            </div>
+
+            <!-- Weather Details -->
+            <div class="weather-details">
+                <div class="detail-row">
+                    <mat-icon>air</mat-icon>
+                    <span class="label">Wind:</span>
+                    <span class="value">{{ forecast.windSpeed }} {{ forecast.windDirection }}</span>
+                </div>
+
+                <div class="detail-row">
+                    <mat-icon>water_drop</mat-icon>
+                    <span class="label">Precip:</span>
+                    <span class="value">{{ forecast.probabilityOfPrecipitation }}%</span>
+                </div>
+            </div>
+
+            <!-- Detailed Forecast -->
+            <div class="detailed-forecast">
+                <p>{{ forecast.detailedForecast }}</p>
+            </div>
+        </div>
+        } @else {
+        <div class="no-data">
+            <mat-icon>cloud_off</mat-icon>
+            <p>Weather data unavailable</p>
+        </div>
+        }
+        } @else {
+        <div class="no-data">
+            <mat-icon>cloud_off</mat-icon>
+            <p>Weather data unavailable</p>
+        </div>
+        }
+    </mat-card-content>
+</mat-card>

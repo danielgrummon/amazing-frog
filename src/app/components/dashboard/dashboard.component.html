@@ -67,6 +67,10 @@
                     </div>
                 </mat-card-content>
             </mat-card>
+
+            <!-- Weather Card - Add below location selection -->
+            <app-weather-card [weather]="weatherData$ | async" [loading]="weatherLoading()">
+            </app-weather-card>
         </aside>
 
         <!-- Main Content -->
